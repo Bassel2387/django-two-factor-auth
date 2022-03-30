@@ -330,6 +330,9 @@ class LoginView(SuccessURLAllowedHostsMixin, IdempotentSessionWizardView):
                 "review the URL and update your settings.",
                 DeprecationWarning)
             context['cancel_url'] = resolve_url(settings.LOGOUT_URL)
+        if getattr(settings, 'ENFORCE_TWO_FACTOR_AUTH', None):
+            context['2fa_enforced'] = settings.ENABLE_TWO_FACTOR_AUTH
+
         return context
 
     @cached_property
