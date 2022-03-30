@@ -179,9 +179,10 @@ class LoginView(SuccessURLAllowedHostsMixin, IdempotentSessionWizardView):
                                     httponly=getattr(settings, 'TWO_FACTOR_REMEMBER_COOKIE_HTTPONLY', True),
                                     samesite=getattr(settings, 'TWO_FACTOR_REMEMBER_COOKIE_SAMESITE', 'Lax'),
                                     )
-            elif getattr(settings, 'ENFORCE_TWO_FACTOR', False):
-                messages.warning(self.request, 'Two Factor Authentication Enable required')
-                return redirect('two_factor:setup')
+
+        elif getattr(settings, 'ENFORCE_TWO_FACTOR', False):
+            messages.warning(self.request, 'Two Factor Authentication Enable required')
+            return redirect('two_factor:setup')
 
         return response
 
