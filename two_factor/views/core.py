@@ -1,14 +1,13 @@
+import django_otp
 import logging
+import qrcode
+import qrcode.image.svg
 import time
 import warnings
 from base64 import b32encode
 from binascii import unhexlify
-from uuid import uuid4
-
-import django_otp
-import qrcode
-import qrcode.image.svg
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
@@ -33,27 +32,26 @@ from django_otp import devices_for_user
 from django_otp.decorators import otp_required
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.util import random_hex
+from uuid import uuid4
 
 from two_factor import signals
 from two_factor.models import get_available_methods
 from two_factor.utils import totp_digits
-
+from .utils import (
+    IdempotentSessionWizardView, class_view_decorator,
+    get_remember_device_cookie, validate_remember_device_cookie,
+)
 from ..forms import (
     AuthenticationTokenForm, BackupTokenForm, DeviceValidationForm, MethodForm,
     PhoneNumberForm, PhoneNumberMethodForm, TOTPDeviceForm, YubiKeyDeviceForm,
 )
 from ..models import PhoneDevice, get_available_phone_methods
 from ..utils import backup_phones, default_device, get_otpauth_url
-from .utils import (
-    IdempotentSessionWizardView, class_view_decorator,
-    get_remember_device_cookie, validate_remember_device_cookie,
-)
 
 try:
     from otp_yubikey.models import ValidationService, RemoteYubikeyDevice
 except ImportError:
     ValidationService = RemoteYubikeyDevice = None
-
 
 logger = logging.getLogger(__name__)
 
@@ -88,15 +86,15 @@ class LoginView(SuccessURLAllowedHostsMixin, IdempotentSessionWizardView):
 
     def has_token_step(self):
         return (
-            default_device(self.get_user()) and
-            not self.remember_agent
+                default_device(self.get_user()) and
+                not self.remember_agent
         )
 
     def has_backup_step(self):
         return (
-            default_device(self.get_user()) and
-            'token' not in self.storage.validated_step_data and
-            not self.remember_agent
+                default_device(self.get_user()) and
+                'token' not in self.storage.validated_step_data and
+                not self.remember_agent
         )
 
     @cached_property
@@ -319,7 +317,7 @@ class LoginView(SuccessURLAllowedHostsMixin, IdempotentSessionWizardView):
                 phone for phone in backup_phones(self.get_user())
                 if phone != self.get_device()]
             try:
-                context['backup_tokens'] = self.get_user().staticdevice_set\
+                context['backup_tokens'] = self.get_user().staticdevice_set \
                     .get(name='backup').token_set.count()
             except StaticDevice.DoesNotExist:
                 context['backup_tokens'] = 0
@@ -522,13 +520,13 @@ class SetupView(IdempotentSessionWizardView):
 
         if method in ('call', 'sms'):
             kwargs['method'] = method
-            kwargs['number'] = self.storage.validated_step_data\
+            kwargs['number'] = self.storage.validated_step_data \
                 .get(method, {}).get('number')
             return PhoneDevice(key=self.get_key(method), **kwargs)
 
         if method == 'yubikey':
-            kwargs['public_id'] = self.storage.validated_step_data\
-                .get('yubikey', {}).get('token', '')[:-32]
+            kwargs['public_id'] = self.storage.validated_step_data \
+                                      .get('yubikey', {}).get('token', '')[:-32]
             try:
                 kwargs['service'] = ValidationService.objects.get(name='default')
             except ValidationService.DoesNotExist:
