@@ -75,4 +75,4 @@ class PhoneDeviceAdmin(admin.ModelAdmin):
     raw_id_fields = ('user',)
 
 
-admin.site.register(PhoneDevice, PhoneDeviceAdmin)
+# admin.site.register(PhoneDevice, PhoneDeviceAdmin)
