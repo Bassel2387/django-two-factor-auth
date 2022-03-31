@@ -330,8 +330,10 @@ class LoginView(SuccessURLAllowedHostsMixin, IdempotentSessionWizardView):
                 "review the URL and update your settings.",
                 DeprecationWarning)
             context['cancel_url'] = resolve_url(settings.LOGOUT_URL)
-        if getattr(self.get_device(), 'otp_device', None) or getattr(settings, 'ENFORCE_TWO_FACTOR_AUTH', None):
+        if getattr(settings, 'ENABLE_TWO_FACTOR_AUTH', False):
             context['2fa_enabled'] = True
+        if getattr(settings, 'ENFORCE_TWO_FACTOR_AUTH', False):
+            context['2fa_enforced'] = True
         return context
 
     @cached_property
