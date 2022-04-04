@@ -560,6 +560,10 @@ class SetupView(IdempotentSessionWizardView):
         elif self.steps.current == 'validation':
             context['device'] = self.get_device()
         context['cancel_url'] = resolve_url(settings.LOGIN_REDIRECT_URL)
+        if getattr(settings, 'ENABLE_TWO_FACTOR_AUTH', False):
+            context['2fa_enabled'] = True
+        if getattr(settings, 'ENFORCE_TWO_FACTOR_AUTH', False):
+            context['2fa_enforced'] = True
         return context
 
     def process_step(self, form):
