@@ -686,8 +686,9 @@ class PhoneSetupView(IdempotentSessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         kwargs.setdefault('cancel_url', resolve_url(self.success_url))
+        context = super().get_context_data(form, **kwargs)
         context['gui_languages'] = self.kwargs.get('gui_languages')
-        return super().get_context_data(form, **kwargs)
+        return context
 
 
 @class_view_decorator(never_cache)
@@ -765,3 +766,8 @@ class QRGeneratorView(View):
         resp = HttpResponse(content_type=content_type)
         img.save(resp)
         return resp
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        context['gui_languages'] = self.kwargs.get('gui_languages')
+        return context
