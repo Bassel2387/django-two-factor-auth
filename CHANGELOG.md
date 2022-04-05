@@ -1,5 +1,16 @@
 ## Unreleased
 
+# 1.13.1.2
+
+### Addd
+- Languages selection to views
+
+# 1.13.1.1
+
+### Add
+- Control enabling/enforcing 2FA for users via settings module
+- Add the info about enabled/enforced 2FA to context data
+
 ## 1.13.1
 
 ### Add
