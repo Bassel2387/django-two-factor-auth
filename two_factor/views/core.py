@@ -714,7 +714,7 @@ class SetupCompleteView(TemplateView):
     """
     template_name = 'two_factor/core/setup_complete.html'
 
-    def get_context_data(self):
+    def get_context_data(self, **kwargs):
         return {
             'phone_methods': get_available_phone_methods(),
             'gui_languages': self.kwargs.get('gui_languages'),

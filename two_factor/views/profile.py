@@ -62,7 +62,7 @@ class DisableView(FormView):
             device.delete()
         return redirect(self.success_url)
 
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['gui_languages'] = self.kwargs.get('gui_languages')
         return context
