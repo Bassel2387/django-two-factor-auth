@@ -334,6 +334,7 @@ class LoginView(SuccessURLAllowedHostsMixin, IdempotentSessionWizardView):
             context['2fa_enabled'] = True
         if getattr(settings, 'ENFORCE_TWO_FACTOR_AUTH', False):
             context['2fa_enforced'] = True
+        context['gui_languages'] = self.kwargs.get('gui_languages')
         return context
 
     @cached_property
@@ -564,6 +565,7 @@ class SetupView(IdempotentSessionWizardView):
             context['2fa_enabled'] = True
         if getattr(settings, 'ENFORCE_TWO_FACTOR_AUTH', False):
             context['2fa_enforced'] = True
+        context['gui_languages'] = self.kwargs.get('gui_languages')
         return context
 
     def process_step(self, form):
@@ -599,6 +601,7 @@ class BackupTokensView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['device'] = self.get_device()
+        context['gui_languages'] = self.kwargs.get('gui_languages')
         return context
 
     def form_valid(self, form):
@@ -683,6 +686,7 @@ class PhoneSetupView(IdempotentSessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         kwargs.setdefault('cancel_url', resolve_url(self.success_url))
+        context['gui_languages'] = self.kwargs.get('gui_languages')
         return super().get_context_data(form, **kwargs)
 
 
@@ -712,6 +716,7 @@ class SetupCompleteView(TemplateView):
     def get_context_data(self):
         return {
             'phone_methods': get_available_phone_methods(),
+            'gui_languages': self.kwargs.get('gui_languages'),
         }
 
 

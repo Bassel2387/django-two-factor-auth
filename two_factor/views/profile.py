@@ -36,7 +36,8 @@ class ProfileView(TemplateView):
             'default_device_type': default_device(self.request.user).__class__.__name__,
             'backup_phones': backup_phones(self.request.user),
             'backup_tokens': backup_tokens,
-            'available_phone_methods': get_available_phone_methods()
+            'available_phone_methods': get_available_phone_methods(),
+            'gui_languages': self.kwargs.get('gui_languages'),
         }
 
 
